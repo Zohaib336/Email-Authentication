@@ -1,7 +1,7 @@
-import { User } from "../models/user.model.js";
-import bcryptjs from 'bcryptjs'
-import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails.js";
+import bcryptjs from "bcryptjs";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails.js";
+import { User } from "../models/user.model.js";
 
 export const signup = async (req, res) => {
     const { email, password, name } = req.body;
@@ -92,5 +92,8 @@ export const login = async (req, res) => {
 }
 
 export const logout = async (req, res) => {
-    res.send("logout routes")
-}
+    res.clearCookie("token");
+    res.status(200).json({
+        success: true, message: "Logged out successfully"
+    });
+};
