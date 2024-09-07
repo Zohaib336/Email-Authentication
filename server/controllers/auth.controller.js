@@ -36,8 +36,11 @@ export const signup = async (req, res) => {
 
         await user.save();
 
+        // JWT
         generateTokenAndSetCookie(res, user._id);
-        sendVerificationEmail(user.email, verificationToken);
+
+        await sendVerificationEmail(user.email, verificationToken);
+
         res.status(201).json({
             success: true,
             message: "User created successfully",
@@ -145,6 +148,7 @@ export const forgotPassword = async (req, res) => {
             });
         }
 
+        // Generate reset token
         const resetToken = crypto.randomBytes(20).toString("hex");
         const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
 
@@ -152,6 +156,8 @@ export const forgotPassword = async (req, res) => {
         user.resetPasswordExpiresAt = resetTokenExpiresAt;
 
         await user.save();
+
+        // Send email
         await sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
 
         res.status(200).json({
